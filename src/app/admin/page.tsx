@@ -6,7 +6,7 @@ import { Category, EventType } from '@/domain/event/event.types';
 type BrandRow = {
   id: string;
   name: string;
-  category: string;
+  category: Category;
   logo_url?: string | null;
   official_url?: string | null;
   is_active?: boolean | null;
@@ -18,23 +18,38 @@ const EVENT_TYPE_OPTIONS = Object.values(EventType);
 export default function AdminPage() {
   const [brands, setBrands] = useState<BrandRow[]>([]);
   const [brandsLoading, setBrandsLoading] = useState(false);
-  const [brandForm, setBrandForm] = useState({
+  const [brandForm, setBrandForm] = useState<{
+    name: string;
+    category: Category;
+    logo_url: string;
+    official_url: string;
+    is_active: boolean;
+  }>({
     name: '',
-    category: CATEGORY_OPTIONS[0] || '',
+    category: (CATEGORY_OPTIONS[0] as Category) || Category.OTHER,
     logo_url: '',
     official_url: '',
     is_active: true,
   });
   const [brandMessage, setBrandMessage] = useState<string | null>(null);
 
-  const [eventForm, setEventForm] = useState({
+  const [eventForm, setEventForm] = useState<{
+    brand_id: string;
+    title: string;
+    description: string;
+    start_date: string;
+    end_date: string;
+    category: Category;
+    event_type: EventType;
+    source: string;
+  }>({
     brand_id: '',
     title: '',
     description: '',
     start_date: '',
     end_date: '',
-    category: CATEGORY_OPTIONS[0] || '',
-    event_type: EVENT_TYPE_OPTIONS[0] || '',
+    category: (CATEGORY_OPTIONS[0] as Category) || Category.OTHER,
+    event_type: (EVENT_TYPE_OPTIONS[0] as EventType) || EventType.DISCOUNT,
     source: '',
   });
   const [eventMessage, setEventMessage] = useState<string | null>(null);
@@ -55,7 +70,11 @@ export default function AdminPage() {
       const data = (await res.json()) as BrandRow[];
       setBrands(data);
       if (!eventForm.brand_id && data.length) {
-        setEventForm((prev) => ({ ...prev, brand_id: data[0].id, category: data[0].category }));
+        setEventForm((prev) => ({
+          ...prev,
+          brand_id: data[0].id,
+          category: data[0].category,
+        }));
       }
     } catch (err) {
       console.error(err);
@@ -91,7 +110,7 @@ export default function AdminPage() {
       setBrandMessage('브랜드가 추가되었습니다.');
       setBrandForm({
         name: '',
-        category: CATEGORY_OPTIONS[0] || '',
+        category: (CATEGORY_OPTIONS[0] as Category) || Category.OTHER,
         logo_url: '',
         official_url: '',
         is_active: true,
@@ -252,7 +271,7 @@ export default function AdminPage() {
                     setEventForm((prev) => ({
                       ...prev,
                       brand_id: e.target.value,
-                      category: selected?.category || prev.category,
+                      category: selected?.category ?? prev.category,
                     }));
                   }}
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
@@ -324,7 +343,9 @@ export default function AdminPage() {
                 카테고리
                 <select
                   value={eventForm.category}
-                  onChange={(e) => setEventForm((prev) => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) =>
+                    setEventForm((prev) => ({ ...prev, category: e.target.value as Category }))
+                  }
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {CATEGORY_OPTIONS.map((cat) => (
