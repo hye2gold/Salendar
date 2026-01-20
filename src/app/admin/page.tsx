@@ -291,7 +291,9 @@ export default function AdminPage() {
                 이벤트 타입
                 <select
                   value={eventForm.event_type}
-                  onChange={(e) => setEventForm((prev) => ({ ...prev, event_type: e.target.value }))}
+                  onChange={(e) =>
+                    setEventForm((prev) => ({ ...prev, event_type: e.target.value as EventType }))
+                  }
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {EVENT_TYPE_OPTIONS.map((type) => (
