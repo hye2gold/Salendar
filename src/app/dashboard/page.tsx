@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Calendar from '@/components/ui/Calendar';
 import CategoryFilter from '@/components/ui/CategoryFilter';
 import EventCard from '@/components/ui/EventCard';
@@ -70,52 +70,74 @@ export default function Home() {
   const disablePrev = currentMonthIndex <= minIndex;
   const disableNext = currentMonthIndex >= maxIndex;
 
+  const loadEvents = useCallback(async () => {
+    setLoading(true);
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    
+    try {
+      const res = await fetch(`/api/events?year=${year}&month=${month}`);
+      if (res.ok) {
+        const data = await res.json();
+        setEvents(data.events || []);
+        if (data.brandLogos) setBrandLogos(data.brandLogos);
+      } else {
+        console.error("Failed to fetch events");
+      }
+    } catch (e) {
+      console.error("API call failed", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentDate]);
+
   // Load events via Server API
   useEffect(() => {
-    const loadEvents = async () => {
-      setLoading(true);
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      
-      try {
-        const res = await fetch(`/api/events?year=${year}&month=${month}`, {
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setEvents(data.events || []);
-          if (data.brandLogos) setBrandLogos(data.brandLogos);
-        } else {
-          console.error("Failed to fetch events");
-        }
-      } catch (e) {
-        console.error("API call failed", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadEvents();
-  }, [currentDate.getFullYear(), currentDate.getMonth()]);
+  }, [loadEvents]);
 
-  // Load brands when brand tab is opened (once)
+  const loadBrands = useCallback(async () => {
+    if (brandsLoading || activeTab !== 'brands') return;
+    setBrandsLoading(true);
+    try {
+      const res = await fetch('/api/brands');
+      if (res.ok) {
+        const data = await res.json();
+        setBrands(data || []);
+      }
+    } catch (e) {
+      console.error('Failed to fetch brands', e);
+    } finally {
+      setBrandsLoading(false);
+    }
+  }, [activeTab, brandsLoading]);
+
+  // Load brands when brand tab is opened
   useEffect(() => {
-    const loadBrands = async () => {
-      if (brands.length || brandsLoading || activeTab !== 'brands') return;
-      setBrandsLoading(true);
-      try {
-        const res = await fetch('/api/brands');
-        if (res.ok) {
-          const data = await res.json();
-          setBrands(data || []);
-        }
-      } catch (e) {
-        console.error('Failed to fetch brands', e);
-      } finally {
-        setBrandsLoading(false);
+    if (activeTab === 'brands') loadBrands();
+  }, [activeTab, loadBrands]);
+
+  // Refetch on focus/visibility
+  useEffect(() => {
+    const handleFocus = () => {
+      loadEvents();
+      loadBrands();
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadEvents();
+        loadBrands();
       }
     };
-    loadBrands();
-  }, [activeTab, brands.length, brandsLoading]);
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [loadEvents, loadBrands]);
 
   // Debounce search term
   useEffect(() => {
