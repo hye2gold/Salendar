@@ -205,7 +205,9 @@ export default function AdminPage() {
                 카테고리
                 <select
                   value={brandForm.category}
-                  onChange={(e) => setBrandForm((prev) => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) =>
+                    setBrandForm((prev) => ({ ...prev, category: e.target.value as Category }))
+                  }
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {CATEGORY_OPTIONS.map((cat) => (
