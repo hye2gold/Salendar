@@ -31,7 +31,6 @@ export const TYPE_BADGE_COLORS: Record<EventType, string> = {
   [EventType.EXCLUSIVE]: '#A06AD1',
 };
 
-// Helper to get logo URL (use Supabase value if provided)
 export const getBrandLogo = (brandName: string, brandLogos?: Record<string, string>) => {
   if (brandLogos && brandLogos[brandName]) {
     return brandLogos[brandName];
