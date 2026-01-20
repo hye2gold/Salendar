@@ -10,6 +10,8 @@ export enum Category {
 
 export enum EventType {
   DISCOUNT = '할인',
+  EVENT = '행사',
+  POPUP = '팝업',
   GIFT = '증정',
   REWARD = '리워드',
   TIMEDEAL = '타임딜',

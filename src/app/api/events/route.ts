@@ -78,6 +78,8 @@ export async function GET(request: NextRequest) {
       const value = (raw || '').toString().trim();
       if (Object.values(EventType).includes(value as EventType)) return value as EventType;
       const lower = value.toLowerCase();
+      if (lower.includes('행사')) return EventType.EVENT;
+      if (lower.includes('팝업') || lower.includes('popup')) return EventType.POPUP;
       if (lower.includes('증정') || lower.includes('사은품') || lower.includes('gift')) return EventType.GIFT;
       if (lower.includes('리워드') || lower.includes('포인트')) return EventType.REWARD;
       if (lower.includes('타임딜') || lower.includes('타임 딜') || lower.includes('타임세일')) return EventType.TIMEDEAL;

@@ -25,6 +25,8 @@ export const CATEGORY_COLORS: Record<Category, string> = {
 export const TYPE_BADGE_COLORS: Record<EventType, string> = {
   // Slightly darker tones so white text is readable
   [EventType.DISCOUNT]: '#E06A6A',
+  [EventType.EVENT]: '#F39C12',
+  [EventType.POPUP]: '#2E86AB',
   [EventType.GIFT]: '#C7C500',
   [EventType.REWARD]: '#6FAF3C',
   [EventType.TIMEDEAL]: '#5C7BD6',
