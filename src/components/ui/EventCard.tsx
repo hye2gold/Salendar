@@ -9,6 +9,7 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ event, brandLogos }) => {
   const logoUrl = getBrandLogo(event.brand, brandLogos);
+  const fallbackLogo = getBrandLogo(event.brand);
 
   // Helper to format date as MM.DD for a cleaner look
   // Safely handles both YYYY-MM-DD strings
@@ -33,7 +34,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, brandLogos }) => {
           alt={`${event.brand} logo`} 
           className="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm"
           onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
+            const target = e.currentTarget;
+            if (target.src !== fallbackLogo) {
+              target.src = fallbackLogo;
+            }
           }}
         />
       </div>

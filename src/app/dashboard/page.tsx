@@ -335,7 +335,11 @@ export default function Home() {
                         alt={`${brand.name} logo`}
                         className="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
+                          const target = e.currentTarget;
+                          const fallback = getBrandLogo(brand.name);
+                          if (target.src !== fallback) {
+                            target.src = fallback;
+                          }
                         }}
                       />
                       <div className="flex flex-col min-w-0">
