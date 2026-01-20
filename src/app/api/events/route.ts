@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Category, PromotionEvent, EventType } from '@/domain/event/event.types';
 import { getSupabaseAdmin } from '@/lib/db/server';
 
+export const dynamic = 'force-dynamic';
+
 const toDateString = (value: string | null | undefined) => {
   if (!value) return '';
   const d = new Date(value);
@@ -101,5 +103,12 @@ export async function GET(request: NextRequest) {
     };
   });
 
-  return NextResponse.json({ events, brandLogos, sources: [] });
+  return NextResponse.json(
+    { events, brandLogos, sources: [] },
+    {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      },
+    }
+  );
 }
