@@ -55,7 +55,11 @@ export default function AdminPage() {
       const data = (await res.json()) as BrandRow[];
       setBrands(data);
       if (!eventForm.brand_id && data.length) {
-        setEventForm((prev) => ({ ...prev, brand_id: data[0].id, category: data[0].category }));
+        setEventForm((prev) => ({
+          ...prev,
+          brand_id: data[0].id,
+          category: data[0].category as Category,
+        }));
       }
     } catch (err) {
       console.error(err);
@@ -186,7 +190,7 @@ export default function AdminPage() {
                 카테고리
                 <select
                   value={brandForm.category}
-                  onChange={(e) => setBrandForm((prev) => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) => setBrandForm((prev) => ({ ...prev, Category: e.target.value }))}
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {CATEGORY_OPTIONS.map((cat) => (
@@ -252,7 +256,7 @@ export default function AdminPage() {
                     setEventForm((prev) => ({
                       ...prev,
                       brand_id: e.target.value,
-                      category: selected?.category || prev.category,
+                      Category: selected?.category || prev.category,
                     }));
                   }}
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
@@ -270,7 +274,7 @@ export default function AdminPage() {
                 이벤트 타입
                 <select
                   value={eventForm.event_type}
-                  onChange={(e) => setEventForm((prev) => ({ ...prev, event_type: e.target.value }))}
+                  onChange={(e) => setEventForm((prev) => ({ ...prev, Event_type: e.target.value }))}
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {EVENT_TYPE_OPTIONS.map((type) => (
@@ -324,7 +328,7 @@ export default function AdminPage() {
                 카테고리
                 <select
                   value={eventForm.category}
-                  onChange={(e) => setEventForm((prev) => ({ ...prev, category: e.target.value }))}
+                  onChange={(e) => setEventForm((prev) => ({ ...prev, Category: e.target.value }))}
                   className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {CATEGORY_OPTIONS.map((cat) => (
