@@ -97,7 +97,6 @@ export default function Home() {
   }, [loadEvents]);
 
   const loadBrands = useCallback(async () => {
-    if (brandsLoading || activeTab !== 'brands') return;
     setBrandsLoading(true);
     try {
       const res = await fetch('/api/brands');
@@ -110,24 +109,25 @@ export default function Home() {
     } finally {
       setBrandsLoading(false);
     }
-  }, [activeTab, brandsLoading]);
+  }, []);
 
   // Load brands when brand tab is opened
   useEffect(() => {
-    if (activeTab === 'brands') loadBrands();
+    if (activeTab !== 'brands') return;
+    loadBrands();
   }, [activeTab, loadBrands]);
 
   // Refetch on focus/visibility
   useEffect(() => {
     const handleFocus = () => {
       loadEvents();
-      loadBrands();
+      if (activeTab === 'brands') loadBrands();
     };
 
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
         loadEvents();
-        loadBrands();
+        if (activeTab === 'brands') loadBrands();
       }
     };
 
@@ -137,7 +137,7 @@ export default function Home() {
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [loadEvents, loadBrands]);
+  }, [activeTab, loadEvents, loadBrands]);
 
   // Debounce search term
   useEffect(() => {
