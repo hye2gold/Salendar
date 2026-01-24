@@ -58,7 +58,7 @@ export default function AdminPage() {
         setEventForm((prev) => ({
           ...prev,
           brand_id: data[0].id,
-          category: data[0].category as Category,
+          Category: data[0].category as Category,
         }));
       }
     } catch (err) {
