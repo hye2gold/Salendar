@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/db/server';
+import { normalizeBrandLogoUrl } from '@/lib/brandLogo';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,12 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data || [], {
+  const normalized = (data || []).map((brand) => ({
+    ...brand,
+    logo_url: normalizeBrandLogoUrl(brand.logo_url) || undefined,
+  }));
+
+  return NextResponse.json(normalized, {
     headers: {
       'Cache-Control': 'no-store, max-age=0',
     },

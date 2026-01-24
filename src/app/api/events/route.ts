@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Category, PromotionEvent, EventType } from '@/domain/event/event.types';
 import { getSupabaseAdmin } from '@/lib/db/server';
+import { normalizeBrandLogoUrl } from '@/lib/brandLogo';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,8 +49,9 @@ export async function GET(request: NextRequest) {
   const brandById = new Map<string, { name: string; category: string; logo_url?: string }>();
   const brandLogos: Record<string, string> = {};
   (brandRows || []).forEach((b) => {
-    brandById.set(b.id, { name: b.name, category: b.category, logo_url: b.logo_url || undefined });
-    if (b.logo_url) brandLogos[b.name] = b.logo_url;
+    const normalizedLogo = normalizeBrandLogoUrl(b.logo_url || undefined) || undefined;
+    brandById.set(b.id, { name: b.name, category: b.category, logo_url: normalizedLogo });
+    if (normalizedLogo) brandLogos[b.name] = normalizedLogo;
   });
 
   // Fetch events overlapping the requested month
