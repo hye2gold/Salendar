@@ -99,7 +99,7 @@ export default function Home() {
   const loadBrands = useCallback(async () => {
     setBrandsLoading(true);
     try {
-      const res = await fetch('/api/brands');
+      const res = await fetch(`/api/brands?ts=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setBrands(data || []);
